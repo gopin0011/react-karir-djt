@@ -24,21 +24,23 @@ import { Route, Switch, useLocation } from "react-router-dom";
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
 import Footer from "components/Footer/Footer.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
-import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
+// import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 
 import { userRoutes, routesSecond } from "routes.js";
 
 import Notifications from "views/Notifications.js";
 import getValueFromLocalStorage from "variables/role.js";
+import { statePool } from "variables/statePool.js";
 
 var ps;
 
 function Dashboard(props) {
-  const [backgroundColor, setBackgroundColor] = React.useState("black");
+  const [backgroundColor, setBackgroundColor] = React.useState("white"); //grey
   const [activeColor, setActiveColor] = React.useState("info");
   const mainPanel = React.useRef();
   const location = useLocation();
   const role = getValueFromLocalStorage();
+  const selectedMenu = statePool.selectedMenu == "seo" ? "Menu2" : "Menu1";
 
   React.useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {
@@ -67,14 +69,17 @@ function Dashboard(props) {
     <div className="wrapper">
       <Sidebar
         {...props}
-        routes={userRoutes[role]}
+        routes={userRoutes[role][selectedMenu]}
         bgColor={backgroundColor}
         activeColor={activeColor}
       />
       <div className="main-panel" ref={mainPanel}>
-        <DemoNavbar {...props} />
+        <DemoNavbar 
+        {...props}
+        routes={userRoutes[role][selectedMenu]}
+         />
         <Switch>
-          {userRoutes[role].map((prop, key) => {
+          {userRoutes[role][selectedMenu].map((prop, key) => {
             if (prop.childItems) {
               return prop.childItems.map((child, keyChild) => (
                 <Route
@@ -106,12 +111,12 @@ function Dashboard(props) {
         </Switch>
         <Footer fluid />
       </div>
-      <FixedPlugin
+      {/* <FixedPlugin
         bgColor={backgroundColor}
         activeColor={activeColor}
         handleActiveClick={handleActiveClick}
         handleBgClick={handleBgClick}
-      />
+      /> */}
     </div>
   );
 }

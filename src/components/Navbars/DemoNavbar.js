@@ -38,7 +38,8 @@ import {
 
 import { userRoutes, routesSecond } from "routes.js";
 import getValueFromLocalStorage from "variables/role.js";
-
+import { statePool } from "variables/statePool.js";
+import NavbarTop from 'components/Navbars/NavbarTop.js';
 
 function Header(props) {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -68,7 +69,7 @@ function Header(props) {
   };
   const getBrand = () => {
     let brandName = "Default Brand";
-    userRoutes[role].map((prop, key) => {
+    props.routes.map((prop, key) => {
       if (prop.childItems) {
         prop.childItems.map((child, keyChild) => {
           if (window.location.href.indexOf(child.layout + child.path) !== -1) {
@@ -104,9 +105,6 @@ function Header(props) {
       setColor("transparent");
     }
   };
-  const triggerClick = (e, path) => {
-    history.push(path);
-  };
   const handleClick = (e, path) => {
     history.push(path);
   };
@@ -116,12 +114,14 @@ function Header(props) {
   React.useEffect(() => {
     if (
       window.innerWidth < 993 &&
-      document.documentElement.className.indexOf("nav-open") !== -1
+      document.documentElement.className.indexOf("nav-open") !== -1 &&
+      statePool.sidebarMenu !== "with-child"
     ) {
       document.documentElement.classList.toggle("nav-open");
       sidebarToggle.current.classList.toggle("toggled");
     }
   }, [location]);
+
   return (
     // add or remove classes depending if we are on full-screen-maps page or not
     <Navbar
@@ -179,6 +179,9 @@ function Header(props) {
                 </p>
               </Link>
             </NavItem>
+
+            <NavbarTop />
+
             <Dropdown
               nav
               isOpen={dropdownOpen}
@@ -195,7 +198,7 @@ function Header(props) {
                 <DropdownItem tag="a">Another Action</DropdownItem>
                 <DropdownItem tag="a">Something else here</DropdownItem>
               </DropdownMenu>
-            </Dropdown>
+            </Dropdown>            
             <Dropdown
               nav
               isOpen={dropdownProfileOpen}
@@ -208,19 +211,11 @@ function Header(props) {
                 </p>
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem tag={"a"} onClick={(e) => triggerClick(e, 'text')}>text here</DropdownItem>
-                <DropdownItem tag={"a"} onClick={(e) => triggerClick(e, 'options')}>Text Here</DropdownItem>
-                <DropdownItem tag={"a"} onClick={(e) => triggerClick(e, 'options2')}>Something else here</DropdownItem>
+                <DropdownItem tag={"a"} onClick={(e) => history.push('text') }>text here</DropdownItem>
+                <DropdownItem tag={"a"} onClick={(e) => history.push('options') }>Text Here</DropdownItem>
+                <DropdownItem tag={"a"} onClick={(e) => history.push('options2') }>Something else here</DropdownItem>
               </DropdownMenu>
             </Dropdown>
-            {/* <NavItem>
-              <Link to="#pablo" className="nav-link btn-rotate">
-                <i className="nc-icon nc-settings-gear-65" />
-                <p>
-                  <span className="d-lg-none d-md-block">Account</span>
-                </p>
-              </Link>
-            </NavItem> */}
           </Nav>
         </Collapse>
       </Container>

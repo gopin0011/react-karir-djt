@@ -23,11 +23,14 @@ import { Nav } from "reactstrap";
 import PerfectScrollbar from "perfect-scrollbar";
 
 import logo from "logo.svg";
+import { menuItems } from '../Menu/MenuItems.js';
+import { statePool } from "variables/statePool.js";
 
 var ps;
 
 function Sidebar(props) {
   const sidebar = React.useRef();
+  const [menu, setMenu] = React.useState(statePool);
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName) => {
     return props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
@@ -48,6 +51,44 @@ function Sidebar(props) {
       }
     };
   });
+
+  const sidebarMenu = (name) => {
+    setMenu({ ...menu, sidebarMenu: name }); // update selectedMenu di dalam state-pool
+    statePool.sidebarMenu = name;
+  };
+
+  const getMenuType = () => {
+    // let menuType = "";
+    // menuItems.map((prop, key) => {
+    //   if (prop.submenu) {
+    //     prop.submenu.map((child, keyChild) => {
+    //       if (child.submenu) {
+    //         child.submenu.map((child2, keyChild2) => {
+    //           if (window.location.href.indexOf("admin/" + child2.url) !== -1) {
+    //             menuType = child2.url;
+    //             return menuType;
+    //           }
+    //           return null;
+    //         });
+    //       }
+
+    //       if (window.location.href.indexOf("admin/" + child.url) !== -1) {
+    //         menuType = child.url;
+    //         return menuType;
+    //       }
+    //       return null;
+    //     });
+    //   }
+    //   if (window.location.href.indexOf("admin/" + prop.url) !== -1) {
+    //     menuType = prop.url;
+    //     return menuType;
+    //   }
+    //   return null;
+    // });
+    
+    return window.location.href;
+  };
+
   return (
     <div
       className="sidebar"
@@ -82,10 +123,10 @@ function Sidebar(props) {
                 data-toggle={prop.childItems ? "collapse" : ""}
               >
                 <NavLink
-                  to={prop.childItems ? "#": prop.layout + prop.path}
+                  to={prop.childItems ? "#" : prop.layout + prop.path}
                   className="nav-link"
                   activeClassName="active"
-                  onClick={prop.childItems ? toggleDropdown : null}
+                  onClick={prop.childItems ? () => {toggleDropdown(); sidebarMenu('with-child')} : () => sidebarMenu('without-child')}
                 >
                   <i className={prop.icon} />
                   <p>{prop.name}
@@ -106,6 +147,7 @@ function Sidebar(props) {
                          <NavLink
                             to={childItem.layout + childItem.path}
                             activeClassName="active"
+                            onClick={() => sidebarMenu('without-child')}
                           >
                             <span className="sidebar-mini-icon">{childItem.icon}</span>
                             <span className="sidebar-normal">{childItem.name}</span>
